@@ -7,15 +7,20 @@ specifiers:
   '@react-navigation/native-stack': ^6.9.9
   '@types/react': ~18.0.14
   '@types/react-native': ~0.70.6
+  '@types/seedrandom': ^3.0.4
   expo: ~47.0.12
   expo-status-bar: ~1.4.2
+  immer: ^9.0.19
   react: 18.1.0
   react-dom: 18.1.0
   react-native: 0.70.5
   react-native-safe-area-context: ^4.5.0
   react-native-screens: ^3.19.0
   react-native-web: ~0.18.9
+  seedrandom: ^3.0.5
   typescript: ^4.6.3
+  zod: ^3.20.2
+  zustand: ^4.3.2
 
 dependencies:
   '@expo/webpack-config': 0.17.4_gjvlvlsewjbotsm53ijzzhwie4
@@ -23,17 +28,22 @@ dependencies:
   '@react-navigation/native-stack': 6.9.9_tzhjy2gc5kvqqitykreeetpfsq
   expo: 47.0.13_@babel+core@7.20.12
   expo-status-bar: 1.4.2
+  immer: 9.0.19
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
   react-native: 0.70.5_7vw2fevm7cxfkwynop5qx4c5l4
   react-native-safe-area-context: 4.5.0_tj3nonr5gneraukzjkxpsiy7yu
   react-native-screens: 3.19.0_tj3nonr5gneraukzjkxpsiy7yu
   react-native-web: 0.18.12_ef5jwxihqo6n7gxfmzogljlgcm
+  seedrandom: 3.0.5
+  zod: 3.20.2
+  zustand: 4.3.2_immer@9.0.19+react@18.1.0
 
 devDependencies:
   '@babel/core': 7.20.12
   '@types/react': 18.0.27
   '@types/react-native': 0.70.10
+  '@types/seedrandom': 3.0.4
   typescript: 4.9.5
 
 packages:
@@ -2300,6 +2310,10 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: true
+
+  /@types/seedrandom/3.0.4:
+    resolution: {integrity: sha512-/rWdxeiuZenlawrHU+XV6ZHMTKOqrC2hMfeDfLTIWJhDZP5aVqXRysduYHBbhD7CeJO6FJr/D2uBVXB7GT6v7w==}
     dev: true
 
   /@types/source-list-map/0.1.2:
@@ -6004,6 +6018,10 @@ packages:
     resolution: {integrity: sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA==}
     dev: false
 
+  /immer/9.0.19:
+    resolution: {integrity: sha512-eY+Y0qcsB4TZKwgQzLaE/lqYMlKhv5J9dyd2RhhtGhNo2njPXDqU9XPfcNfa3MIDsdtZt5KlkIsirlo4dHsWdQ==}
+    dev: false
+
   /import-fresh/2.0.0:
     resolution: {integrity: sha512-eZ5H8rcgYazHbKC3PG4ClHNykCSxtAhxSSEM+2mb+7evD2CKF5V7c0dNum7AdpDh0ZdICwZY9sRSn8f+KH96sg==}
     engines: {node: '>=4'}
@@ -9473,6 +9491,10 @@ packages:
       ajv-keywords: 3.5.2_ajv@6.12.6
     dev: false
 
+  /seedrandom/3.0.5:
+    resolution: {integrity: sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==}
+    dev: false
+
   /select-hose/2.0.0:
     resolution: {integrity: sha512-mEugaLK+YfkijB4fx0e6kImuJdCIt2LxCRcbEYPqRGCs4F2ogyfZU5IAZRdjCP8JPq2AtdNoC/Dux63d9Kiryg==}
     dev: false
@@ -11196,4 +11218,25 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+    dev: false
+
+  /zod/3.20.2:
+    resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
+    dev: false
+
+  /zustand/4.3.2_immer@9.0.19+react@18.1.0:
+    resolution: {integrity: sha512-rd4haDmlwMTVWVqwvgy00ny8rtti/klRoZjFbL/MAcDnmD5qSw/RZc+Vddstdv90M5Lv6RPgWvm1Hivyn0QgJw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      immer: 9.0.19
+      react: 18.1.0
+      use-sync-external-store: 1.2.0_react@18.1.0
     dev: false

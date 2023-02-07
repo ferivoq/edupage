@@ -20,6 +20,7 @@ interface ParamList extends ParamListBase {
   }
 }
 
+export type NavigationProps = NativeStackScreenProps<ParamList>
 export type SchoolHomeProps = NativeStackScreenProps<ParamList,'SchoolHome'>
 export type TimetableViewerProps = NativeStackScreenProps<ParamList,'TimetableViewer'>
 
@@ -46,7 +47,13 @@ const stackLinking: LinkingOptions<ParamList> = {
 export default function App() {
   return (
     <NavigationContainer linking={stackLinking}>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          contentStyle: {
+            backgroundColor: "#fff"
+          }
+        }}
+      >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="SchoolHome" component={SchoolHomeScreen} />
         <Stack.Screen name="TimetableViewer" component={TimetableViewerScreen} />
