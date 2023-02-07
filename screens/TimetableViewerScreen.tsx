@@ -20,7 +20,7 @@ export function TimetableViewerScreen(){
 
     let pagerRef = createRef<PagerView>();
 
-    let selectedDay = useDaySelectorStore(state=>state.selectedDay);
+    let selectedDay = useDaySelectorStore.getState().selectedDay;
 
     return <View
         style={{
@@ -117,7 +117,7 @@ export function TimetableViewerScreen(){
                         initialPage={selectedDay}
                     >
                         { timetable?.days.filter(e=>e.val != null).map(day=>{
-                            return <Day key={day.id} dayId={day.id}></Day>
+                            return <Day key={day.id} dayId={day.id} classId={route.params.objectId}></Day>
                         }) } 
                     </PagerView>
                 </View>
