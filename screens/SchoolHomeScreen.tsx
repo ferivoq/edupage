@@ -6,20 +6,20 @@ import { getTimetableData, getVersions } from '../data/api';
 import { Timetable } from '../data/timetable';
 import { Versions } from '../data/versions';
 import seedrandom from 'seedrandom';
+import { useGlobalStore } from '../state/GlobalStore';
 
 export function SchoolHomeScreen(){
     let route = useRoute<SchoolHomeProps['route']>();
     let navigation = useNavigation<SchoolHomeProps['navigation']>();
     let schoolId = route.params.schoolId;
-    let [versions, setVersions] = useState<Versions | undefined>();
-    let [timetable, setTimetable] = useState<Timetable | undefined>();
+    let {timetable, versions} = useGlobalStore(({versions, timetable})=>({versions,timetable}));
     
     useEffect(()=>{
-        getVersions(schoolId).then(setVersions);
+        getVersions(schoolId).then(versions=>useGlobalStore.setState({versions}));
     },[])
     useEffect(()=>{
         if (versions?.current){
-            getTimetableData(schoolId,versions.current.id).then(setTimetable);
+            getTimetableData(schoolId,versions.current.id).then(timetable=>useGlobalStore.setState({timetable}));
         }
     },[versions])
 
