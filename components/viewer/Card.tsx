@@ -3,16 +3,13 @@ import { View, Text, TouchableNativeFeedback } from 'react-native';
 import { Lesson } from "../../data/lessons";
 import { Styles } from "../../styles/styles";
 import { Group } from "../../data/groups";
-import { CardData, isPlaceholder, PlaceholderCardData } from "../../data/cards";
+import { CardData, getCardColor, getClassroomText, getGroupText, getTeacherText, isPlaceholder, PlaceholderCardData } from "../../data/cards";
 
 interface Props {
     card: CardData | PlaceholderCardData
 }
 
 export function Card({card}: Props) {
-    let {lesson, entry, groups} = card;
-    let duration = lesson?.duration || 1;
-
     if (isPlaceholder(card)) {
         return <View
             style={{
@@ -24,10 +21,20 @@ export function Card({card}: Props) {
         </View>
     }
 
+    let {lesson, entry, groups, subject} = card;
+    let duration = lesson?.duration || 1;
+    let isEntireClass = groups[0]?.isEntireClass;
+
+    let textStyle = {
+        fontSize: 14,
+        lineHeight: 14,
+        color: "#000000",
+    }
+
     return <View
         style={{
             marginRight: Styles.viewer.spacing,
-            backgroundColor: "green",
+            backgroundColor: isEntireClass ? "#EDEDED" : getCardColor(card),
             flex: 1,
             borderRadius: 8.66,
             height: Styles.viewer.rowHeight * duration + Styles.viewer.spacing * (duration-1),
@@ -37,20 +44,45 @@ export function Card({card}: Props) {
     >
         <TouchableNativeFeedback
             onPress={()=>{
-                alert(JSON.stringify(card.groups))
+                alert(JSON.stringify({
+                    name: subject.name
+                }))
             }}
         >
             <View
                 style={{
-                    padding: 7,
                     width: "100%",
                     height: "100%",
                     alignSelf: "stretch",
                     flexGrow: 1,
+                    justifyContent: "space-between",
+                    padding: 7,
                 }}
             >
-                <Text>{groups?.map(e=>`${e.id}`).join("|")}</Text>
-                <Text>{groups?.map(e=>`${e.name}`).join("|")}</Text>
+                <View
+                    style={{
+                        flexDirection: "row"
+                    }}
+                >
+                    { !isEntireClass && <Text
+                        style={[textStyle,{
+                            flex: 1,
+                        }]}
+                        numberOfLines={1}
+                    >{getGroupText(card)}</Text> }
+                    <Text
+                        style={textStyle}
+                        numberOfLines={1}
+                    >{getClassroomText(card)}</Text>
+                </View>
+                <Text
+                    style={[textStyle,{textAlign: "center"}]}
+                    numberOfLines={duration * 2}
+                >{subject.name}</Text>
+                <Text
+                    style={[textStyle,{textAlign: "right"}]}
+                    numberOfLines={1}
+                >{getTeacherText(card)}</Text>
             </View>
         </TouchableNativeFeedback>
     </View>

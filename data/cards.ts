@@ -1,18 +1,28 @@
+import seedrandom from "seedrandom";
+import { Classroom } from "./classrooms";
 import { Division } from "./divisions";
 import { Entry } from "./entries";
 import { Group } from "./groups";
 import { Lesson } from "./lessons";
+import { Subject } from "./subjects";
+import { Teacher } from "./teachers";
 import { Timetable } from "./timetable";
 
 export interface CardData {
     entry: Entry
     lesson: Lesson
+    subject: Subject
+    teachers: Teacher[]
+    classrooms: Classroom[]
     groups: Group[]
 }
 
 export interface PlaceholderCardData {
     entry: undefined
     lesson: undefined
+    subject: undefined
+    teachers: undefined
+    classrooms: undefined
     groups: Group[]
 }
 
@@ -26,6 +36,20 @@ export function getCardKey(data: CardData | PlaceholderCardData){
 
 export function isPlaceholder(data: CardData | PlaceholderCardData): data is PlaceholderCardData {
     return !data.lesson && !data.entry;
+}
+
+export function getGroupText(card: CardData){
+    return [...new Set(card.groups.map(e=>e.name))];
+}
+export function getTeacherText(card: CardData){
+    return [...new Set(card.teachers.map(e=>e.name))];
+}
+export function getClassroomText(card: CardData){
+    return [...new Set(card.classrooms.map(e=>e.shortName))];
+}
+
+export function getCardColor(card: CardData){
+    return `hsl(${Math.floor(seedrandom(card.groups[0]?.id)()*300)}, 100%, 75%)`;
 }
 
 function findCommonDivision(timetable: Timetable,cards: CardData[]): Division | undefined {
@@ -57,15 +81,33 @@ export function getCardsInRow(timetable: Timetable, dayId: string, periodId: str
     }).map(entry=>{
         let lesson = lessons.find(lesson=>lesson.id == entry.lessonId);
         if (!lesson){
-            return undefined;
+            return;
         }
+        
+        let subject = timetable.subjects.find(e=>e.id == lesson?.subjectId);
+
+        if (!subject){
+            return;
+        }
+
         let groups = lesson.groupIds
             .map(groupId=>timetable.groups.find(e=>e.id == groupId))
             .filter(e=>e != undefined) as Group[];
-        
+
+        let teachers = lesson.teacherIds
+            .map(teacherId=>timetable.teachers.find(e=>e.id == teacherId))
+            .filter(e=>e != undefined) as Teacher[];
+
+        let classrooms = entry.classroomIds
+            .map(classroomId=>timetable.classrooms.find(e=>e.id == classroomId))
+            .filter(e=>e != undefined) as Classroom[];
+
         let card: CardData = {
             entry,
             lesson,
+            subject,
+            teachers,
+            classrooms,
             groups,
         }
         return card;
@@ -89,6 +131,9 @@ export function getCardsInRow(timetable: Timetable, dayId: string, periodId: str
                 cardsAndPlaceholders.push({
                     entry: undefined,
                     lesson: undefined,
+                    subject: undefined,
+                    teachers: undefined,
+                    classrooms: undefined,
                     groups: [group],
                 })
             }

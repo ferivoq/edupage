@@ -1,6 +1,6 @@
 export const Styles = {
     viewer: {
-        rowHeight: 67,
+        rowHeight: 70,
         spacing: 7
     }
 }

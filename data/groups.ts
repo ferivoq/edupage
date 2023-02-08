@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CardData } from './cards';
 import { TableSchema } from './table';
 
 const GroupSchema = z.object({
