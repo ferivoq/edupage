@@ -3,15 +3,26 @@ import { View, Text, TouchableNativeFeedback } from 'react-native';
 import { Lesson } from "../../data/lessons";
 import { Styles } from "../../styles/styles";
 import { Group } from "../../data/groups";
-import { CardData } from "../../data/card";
+import { CardData, isPlaceholder, PlaceholderCardData } from "../../data/cards";
 
 interface Props {
-    card: CardData
+    card: CardData | PlaceholderCardData
 }
 
 export function Card({card}: Props) {
     let {lesson, entry, groups} = card;
     let duration = lesson?.duration || 1;
+
+    if (isPlaceholder(card)) {
+        return <View
+            style={{
+                marginRight: Styles.viewer.spacing,
+                flex: 1,
+                zIndex: 0
+            }}
+        >
+        </View>
+    }
 
     return <View
         style={{
@@ -20,10 +31,15 @@ export function Card({card}: Props) {
             flex: 1,
             borderRadius: 8.66,
             height: Styles.viewer.rowHeight * duration + Styles.viewer.spacing * (duration-1),
-            overflow: "hidden"
+            overflow: "hidden",
+            zIndex: 1
         }}
     >
-        <TouchableNativeFeedback>
+        <TouchableNativeFeedback
+            onPress={()=>{
+                alert(JSON.stringify(card.groups))
+            }}
+        >
             <View
                 style={{
                     padding: 7,
@@ -33,8 +49,8 @@ export function Card({card}: Props) {
                     flexGrow: 1,
                 }}
             >
-                <Text>{lesson?.subjectId} {lesson?.duration}</Text>
-                <Text>{groups?.map(e=>`${e.divisionId}`).join("|")}</Text>
+                <Text>{groups?.map(e=>`${e.id}`).join("|")}</Text>
+                <Text>{groups?.map(e=>`${e.name}`).join("|")}</Text>
             </View>
         </TouchableNativeFeedback>
     </View>

@@ -7,6 +7,7 @@ import { Day, DaysSchema } from './days';
 import { EntriesSchema, Entry } from './entries';
 import { Lesson, LessonsSchema } from './lessons';
 import { Group, GroupsSchema } from './groups';
+import { Division, DivisionsSchema } from './divisions';
 
 export const TimetableSchema = z.object({
     r: z.object({
@@ -35,6 +36,7 @@ export class Timetable {
     entires: Entry[]
     lessons: Lesson[]
     groups: Group[]
+    divisions: Division[]
 
     constructor(json: TimetableJson){
         this.periods = findBySchema(json.r.dbiAccessorRes.tables,PeriodsSchema)
@@ -49,5 +51,7 @@ export class Timetable {
             .data_rows.map(e=>new Lesson(e));
         this.groups = findBySchema(json.r.dbiAccessorRes.tables,GroupsSchema)
             .data_rows.map(e=>new Group(e));
+        this.divisions = findBySchema(json.r.dbiAccessorRes.tables,DivisionsSchema)
+            .data_rows.map(e=>new Division(e));
     }
 }

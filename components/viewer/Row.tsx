@@ -1,7 +1,5 @@
-import { View, Text } from "react-native";
-import { CardData } from "../../data/card";
-import { Group } from "../../data/groups";
-import { Lesson } from "../../data/lessons";
+import { View } from "react-native";
+import { CardData, getCardKey, getCardsInRow, PlaceholderCardData } from "../../data/cards";
 import { useGlobalStore } from "../../state/GlobalStore";
 import { Styles } from "../../styles/styles";
 import { Card } from "./Card";
@@ -15,22 +13,10 @@ interface Props {
 export function Row({dayId, periodId, classId}: Props){
 
     let timetable = useGlobalStore(state=>state.timetable);
-    let day = timetable?.days.find(e=>e.id == dayId);
-    let lessons = timetable?.lessons;
-    let items = timetable?.entires.filter(entry=>{
-        return day?.match(entry.days) && entry.periodId == periodId
-    }).map(entry=>{
-        let lesson = lessons?.find(lesson=>lesson.id == entry.lessonId);
-        let groups = lesson?.groupIds.map(groupId=>timetable?.groups.find(e=>e.id == groupId) as Group);
-        let card: CardData = {
-            lesson,
-            entry,
-            groups
-        }
-        return card;
-    }).filter(({lesson})=>{
-        return lesson && lesson?.classIds.includes(classId);
-    });
+    let cards: (CardData | PlaceholderCardData)[] = [];
+    if (timetable){
+        cards = getCardsInRow(timetable,dayId,periodId,classId);
+    }
 
     return <View
         style={{
@@ -40,8 +26,8 @@ export function Row({dayId, periodId, classId}: Props){
             flexDirection: "row"
         }}
     >
-        { items?.map(card=>{
-            return <Card key={card.entry?.id || JSON.stringify(card)} card={card}></Card>
+        { cards.map(card=>{
+            return <Card key={getCardKey(card)} card={card}></Card>
         }) }
     </View>
 }
