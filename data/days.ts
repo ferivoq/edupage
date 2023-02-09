@@ -1,18 +1,14 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const DaySchema = z.object({
+export const DaySchema = z.object({
     id: z.string(),
     vals: z.array(z.string()),
     val: z.number().or(z.null()),
     name: z.string(),
     short: z.string()
 })
-
-export const DaysSchema = TableSchema.extend({
-    id: z.literal("daysdefs"),
-    data_rows: z.array(DaySchema)
-});
 
 type DayJson = z.infer<typeof DaySchema>
 
@@ -34,4 +30,8 @@ export class Day {
         this.val = json.val;
         this.vals = json.vals;
     }
+}
+
+export function parseDays(json: TimetableJson){
+    return getTableItems(json,"daysdefs",DaySchema,e=>new Day(e))
 }

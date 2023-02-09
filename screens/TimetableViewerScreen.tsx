@@ -20,6 +20,7 @@ export function TimetableViewerScreen(){
 
     let pagerRef = createRef<PagerView>();
 
+    // note: we don't use it as a hook, so the component doesn't rerender when the value changes.
     let selectedDay = useDaySelectorStore.getState().selectedDay;
 
     return <View
@@ -118,7 +119,7 @@ export function TimetableViewerScreen(){
                     >
                         { timetable?.days.filter(e=>e.val != null).map(day=>{
                             return <Day key={day.id} dayId={day.id} classId={route.params.objectId}></Day>
-                        }) } 
+                        }) }
                     </PagerView>
                 </View>
             </View>

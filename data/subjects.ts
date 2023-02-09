@@ -1,17 +1,13 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const SubjectSchema = z.object({
+export const SubjectSchema = z.object({
     id: z.string(),
     name: z.string(),
     short: z.string(),
     color: z.string()
 })
-
-export const SubjectsSchema = TableSchema.extend({
-    id: z.literal("subjects"),
-    data_rows: z.array(SubjectSchema)
-});
 
 type SubjectJson = z.infer<typeof SubjectSchema>
 
@@ -27,4 +23,8 @@ export class Subject {
         this.shortName = json.short;
         this.color = json.color;
     }
+}
+
+export function parseSubjects(json: TimetableJson){
+    return getTableItems(json,"subjects",SubjectSchema,e=>new Subject(e))
 }

@@ -13,7 +13,10 @@ export function Day({dayId, classId}: DayProps){
 
     let timetable = useGlobalStore(state=>state.timetable);
     let day = timetable?.days.find(e=>e.id == dayId);
+    
+    // note: we don't use it as a hook, so the component doesn't rerender when the value changes.
     let selectedDay = useDaySelectorStore.getState().selectedDay;
+
     let isSelectedDay = day?.val == selectedDay;
     let [show, setShow] = useState<boolean>(isSelectedDay);
 

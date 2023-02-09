@@ -1,17 +1,13 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const ClassSchema = z.object({
+export const ClassSchema = z.object({
     id: z.string(),
     name: z.string(),
     short: z.string(),
     color: z.string(),
 })
-
-export const ClassesSchema = TableSchema.extend({
-    id: z.literal("classes"),
-    data_rows: z.array(ClassSchema)
-});
 
 type ClassJson = z.infer<typeof ClassSchema>
 
@@ -27,4 +23,8 @@ export class Class {
         this.shortName = json.short;
         this.color = json.color;
     }
+}
+
+export function parseClasses(json: TimetableJson){
+    return getTableItems(json,"classes",ClassSchema,e=>new Class(e));
 }

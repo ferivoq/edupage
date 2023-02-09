@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const EntrySchema = z.object({
+export const EntrySchema = z.object({
     id: z.string(),
     lessonid: z.string(),
     period: z.string(),
@@ -9,11 +10,6 @@ const EntrySchema = z.object({
     weeks: z.string(),
     classroomids: z.array(z.string())
 })
-
-export const EntriesSchema = TableSchema.extend({
-    id: z.literal("cards"),
-    data_rows: z.array(EntrySchema)
-});
 
 type EntryJson = z.infer<typeof EntrySchema>
 
@@ -33,4 +29,8 @@ export class Entry {
         this.weeks = json.weeks;
         this.classroomIds = json.classroomids;
     }
+}
+
+export function parseEntires(json: TimetableJson){
+    return getTableItems(json,"cards",EntrySchema,e=>new Entry(e))
 }

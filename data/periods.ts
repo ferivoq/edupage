@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
 export const PeriodSchema = z.object({
     id: z.string(),
@@ -9,11 +10,6 @@ export const PeriodSchema = z.object({
 })
 
 export type PeriodJson = z.infer<typeof PeriodSchema>
-
-export const PeriodsSchema = TableSchema.extend({
-    id: z.literal("periods"),
-    data_rows: z.array(PeriodSchema)
-})
 
 export class Period {
 
@@ -28,4 +24,8 @@ export class Period {
         this.endTime = json.endtime;
         this.name = json.period;
     }
+}
+
+export function parsePeriods(json: TimetableJson){
+    return getTableItems(json,"periods",PeriodSchema,e=>new Period(e))
 }

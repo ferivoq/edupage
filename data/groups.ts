@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { CardData } from './cards';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const GroupSchema = z.object({
+export const GroupSchema = z.object({
     id: z.string(),
     name: z.string(),
     classid: z.string(),
@@ -10,11 +10,6 @@ const GroupSchema = z.object({
     divisionid: z.string(),
     color: z.string()
 })
-
-export const GroupsSchema = TableSchema.extend({
-    id: z.literal("groups"),
-    data_rows: z.array(GroupSchema)
-});
 
 type GroupJson = z.infer<typeof GroupSchema>
 
@@ -34,4 +29,8 @@ export class Group {
         this.divisionId = json.divisionid;
         this.color = json.color;
     }
+}
+
+export function parseGroups(json: TimetableJson){
+    return getTableItems(json,"groups",GroupSchema,e=>new Group(e));
 }

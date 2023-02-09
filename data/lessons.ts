@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { TableSchema } from './table';
+import { getTableItems } from './table';
+import { TimetableJson } from './timetable';
 
-const LessonSchema = z.object({
+export const LessonSchema = z.object({
     id: z.string(),
     subjectid: z.string(),
     teacherids: z.array(z.string()),
@@ -10,11 +11,6 @@ const LessonSchema = z.object({
     count: z.number(),
     durationperiods: z.number(),
 })
-
-export const LessonsSchema = TableSchema.extend({
-    id: z.literal("lessons"),
-    data_rows: z.array(LessonSchema)
-});
 
 type LessonJson = z.infer<typeof LessonSchema>
 
@@ -34,4 +30,8 @@ export class Lesson {
         this.classIds = json.classids;
         this.duration = json.durationperiods;
     }
+}
+
+export function parseLessons(json: TimetableJson){
+    return getTableItems(json,"lessons",LessonSchema,e=>new Lesson(e))
 }
