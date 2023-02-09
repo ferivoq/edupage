@@ -2,18 +2,19 @@ import { z } from "zod";
 import type { Schema } from 'zod';
 import { TimetableJson } from "./timetable";
 
-export const TableSchema = z.object({
-    id: z.string(),
-    data_rows: z.array(z.any())
-})
-
-export function findBySchema<T extends Schema>(array: unknown[], id: string, schema: T): z.infer<T> {
-
+function createTableSchema(id: string, ItemSchema?: Schema){
     const TableSchema = z.object({
         id: z.literal(id),
-        data_rows: z.array(schema)
+        def: z.object({
+            name: z.string(),
+            item_name: z.string()
+        }),
+        data_rows: z.array(ItemSchema || z.unknown())
     })
-
+    return TableSchema;
+}
+export function getTableData(array: unknown[], id: string, itemSchema?: Schema) {
+    const TableSchema = createTableSchema(id,itemSchema);
     for(let e of array){
         let result = TableSchema.safeParse(e);
         if (result.success){
@@ -23,6 +24,6 @@ export function findBySchema<T extends Schema>(array: unknown[], id: string, sch
     throw new Error("No object matching the provided schema was found in the array");
 }
 export function getTableItems<ResultType>(json: TimetableJson, id: string, schema: Schema, factory: (itemJson: any)=>ResultType): ResultType[] {
-    return findBySchema(json.r.dbiAccessorRes.tables, id, schema)
+    return getTableData(json.r.dbiAccessorRes.tables, id, schema)
         .data_rows.map(factory);
 }

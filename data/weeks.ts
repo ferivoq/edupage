@@ -2,18 +2,18 @@ import { z } from 'zod';
 import { getTableItems } from './table';
 import { TimetableJson } from './timetable';
 
-export const DaySchema = z.object({
+export const WeekSchema = z.object({
     id: z.string(),
-    vals: z.array(z.string()),
-    val: z.number().or(z.null()),
     name: z.string(),
     short: z.string(),
-    typ: z.string()
+    vals: z.array(z.string()),
+    val: z.number().or(z.null()),
+    typ: z.string(),
 })
 
-type DayJson = z.infer<typeof DaySchema>
+type WeekJson = z.infer<typeof WeekSchema>
 
-export class Day {
+export class Week {
     id: string;
     name: string;
     shortName: string;
@@ -24,7 +24,7 @@ export class Day {
         return this.masks.includes(mask);
     }
 
-    constructor(json: DayJson){
+    constructor(json: WeekJson){
         this.id = json.id;
         this.name = json.name;
         this.shortName = json.short;
@@ -33,6 +33,6 @@ export class Day {
     }
 }
 
-export function parseDays(json: TimetableJson){
-    return getTableItems(json,"daysdefs",DaySchema,e=>new Day(e))
+export function parseWeeks(json: TimetableJson){
+    return getTableItems(json,"weeksdefs",WeekSchema,e=>new Week(e))
 }

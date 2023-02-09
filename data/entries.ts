@@ -17,16 +17,16 @@ export class Entry {
     id: string;
     lessonId: string;
     periodId: string;
-    days: string;
-    weeks: string;
+    daysMask: string;
+    weeksMask: string;
     classroomIds: string[]
 
     constructor(json: EntryJson){
         this.id = json.id;
         this.lessonId = json.lessonid;
         this.periodId = json.period;
-        this.days = json.days;
-        this.weeks = json.weeks;
+        this.daysMask = json.days;
+        this.weeksMask = json.weeks;
         this.classroomIds = json.classroomids;
     }
 }

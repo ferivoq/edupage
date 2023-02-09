@@ -9,6 +9,8 @@ import { Division, parseDivisions } from './divisions';
 import { Subject, parseSubjects } from './subjects';
 import { Teacher, parseTeachers } from './teachers';
 import { Classroom, parseClassrooms } from './classrooms';
+import { Strings } from './strings';
+import { parseWeeks, Week } from './weeks';
 
 export const TimetableSchema = z.object({
     r: z.object({
@@ -31,6 +33,8 @@ export class Timetable {
     subjects: Subject[]
     teachers: Teacher[]
     classrooms: Classroom[]
+    weeks: Week[]
+    strings: Strings
 
     constructor(json: TimetableJson){
         this.periods = parsePeriods(json);
@@ -43,5 +47,7 @@ export class Timetable {
         this.subjects = parseSubjects(json);
         this.teachers = parseTeachers(json);
         this.classrooms = parseClassrooms(json);
+        this.weeks = parseWeeks(json);
+        this.strings = new Strings(json);
     }
 }

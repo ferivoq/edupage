@@ -3,14 +3,15 @@ import { View, Text, TouchableNativeFeedback } from 'react-native';
 import { Lesson } from "../../data/lessons";
 import { Styles } from "../../styles/styles";
 import { Group } from "../../data/groups";
-import { CardData, getCardColor, getClassroomText, getGroupText, getTeacherText, isPlaceholder, PlaceholderCardData } from "../../data/cards";
+import { CardData, getCardColor, getShortClassroomText, getGroupText, getTeacherText, isPlaceholderCardData, PlaceholderCardData, isCardData } from "../../data/cards";
+import { useLessonModalStore } from "./LessonModal";
 
 interface Props {
     card: CardData | PlaceholderCardData
 }
 
 export function Card({card}: Props) {
-    if (isPlaceholder(card)) {
+    if (!isCardData(card)) {
         return <View
             style={{
                 marginRight: Styles.viewer.spacing,
@@ -22,7 +23,7 @@ export function Card({card}: Props) {
     }
 
     let {lesson, entry, groups, subject} = card;
-    let duration = lesson?.duration || 1;
+    let duration = lesson.duration || 1;
     let isEntireClass = groups[0]?.isEntireClass;
 
     let textStyle = {
@@ -34,7 +35,7 @@ export function Card({card}: Props) {
     return <View
         style={{
             marginRight: Styles.viewer.spacing,
-            backgroundColor: isEntireClass ? "#EDEDED" : getCardColor(card),
+            backgroundColor: getCardColor(card),
             flex: 1,
             borderRadius: 8.66,
             height: Styles.viewer.rowHeight * duration + Styles.viewer.spacing * (duration-1),
@@ -44,9 +45,7 @@ export function Card({card}: Props) {
     >
         <TouchableNativeFeedback
             onPress={()=>{
-                alert(JSON.stringify({
-                    name: subject.name
-                }))
+                useLessonModalStore.getState().show(card);
             }}
         >
             <View
@@ -74,7 +73,7 @@ export function Card({card}: Props) {
                             textAlign: "right"
                         }]}
                         numberOfLines={1}
-                    >{getClassroomText(card)}</Text>
+                    >{getShortClassroomText(card)}</Text>
                 </View>
                 <Text
                     style={[textStyle,{textAlign: "center"}]}

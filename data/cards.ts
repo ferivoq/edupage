@@ -7,6 +7,7 @@ import { Lesson } from "./lessons";
 import { Subject } from "./subjects";
 import { Teacher } from "./teachers";
 import { Timetable } from "./timetable";
+import { Week } from "./weeks";
 
 export interface CardData {
     entry: Entry
@@ -14,41 +15,53 @@ export interface CardData {
     subject: Subject
     teachers: Teacher[]
     classrooms: Classroom[]
+    week: Week
     groups: Group[]
 }
 
-export interface PlaceholderCardData {
-    entry: undefined
-    lesson: undefined
-    subject: undefined
-    teachers: undefined
-    classrooms: undefined
+export interface PlaceholderCardData extends Partial<CardData> {
     groups: Group[]
 }
 
 export function getCardKey(data: CardData | PlaceholderCardData){
-    if (isPlaceholder(data)){
-        return data.groups.map(e=>e.id).join(",");
-    } else {
+    if (isCardData(data)){
         return data.entry.id;
+    } else {
+        return data.groups.map(e=>e.id).join(",");
     }
 }
 
-export function isPlaceholder(data: CardData | PlaceholderCardData): data is PlaceholderCardData {
-    return !data.lesson && !data.entry;
+export function isCardData(data: CardData | PlaceholderCardData): data is CardData {
+    let props = ["entry","lesson","subject","teachers","classrooms","week","groups"];
+    for(let prop of props){
+        if (!(prop in data)){
+            return false;
+        }
+    }
+    return true;
+}
+export function isPlaceholderCardData(data: CardData | PlaceholderCardData): data is PlaceholderCardData {
+    return !isCardData(data);
 }
 
 export function getGroupText(card: CardData){
-    return [...new Set(card.groups.map(e=>e.name))];
+    return [...new Set(card.groups.map(e=>e.name))].join(", ");
 }
 export function getTeacherText(card: CardData){
-    return [...new Set(card.teachers.map(e=>e.name))];
+    return [...new Set(card.teachers.map(e=>e.name))].join(", ");
 }
 export function getClassroomText(card: CardData){
-    return [...new Set(card.classrooms.map(e=>e.shortName))];
+    return [...new Set(card.classrooms.map(e=>e.name))].join(", ");
+}
+export function getShortClassroomText(card: CardData){
+    return [...new Set(card.classrooms.map(e=>e.shortName))].join(", ");
 }
 
 export function getCardColor(card: CardData){
+    if (card.groups[0]?.isEntireClass){
+        return "#EDEDED";
+    }
+
     return `hsl(${Math.floor(seedrandom(card.groups[0]?.id)()*300)}, 100%, 75%)`;
 }
 
@@ -77,7 +90,7 @@ export function getCardsInRow(timetable: Timetable, dayId: string, periodId: str
     let day = timetable.days.find(e=>e.id == dayId);
     let lessons = timetable.lessons;
     let cards = timetable.entires.filter(entry=>{
-        return day?.match(entry.days) && entry.periodId == periodId
+        return day?.match(entry.daysMask) && entry.periodId == periodId
     }).map(entry=>{
         let lesson = lessons.find(lesson=>lesson.id == entry.lessonId);
         if (!lesson){
@@ -87,6 +100,12 @@ export function getCardsInRow(timetable: Timetable, dayId: string, periodId: str
         let subject = timetable.subjects.find(e=>e.id == lesson?.subjectId);
 
         if (!subject){
+            return;
+        }
+
+        let week = timetable.weeks.find(e=>e.match(entry.weeksMask) && e.masks.length == 1);
+
+        if (!week){
             return;
         }
 
@@ -108,6 +127,7 @@ export function getCardsInRow(timetable: Timetable, dayId: string, periodId: str
             subject,
             teachers,
             classrooms,
+            week,
             groups,
         }
         return card;

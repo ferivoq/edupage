@@ -8,6 +8,7 @@ import { Day } from '../components/viewer/Day';
 import PagerView from 'react-native-pager-view';
 import { Styles } from '../styles/styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LessonModal } from '../components/viewer/LessonModal';
 
 export function TimetableViewerScreen(){
     let route = useRoute<TimetableViewerProps['route']>();
@@ -28,6 +29,7 @@ export function TimetableViewerScreen(){
             flex: 1,
         }}
     >
+        <LessonModal />
         <ScrollView
             style={{
                 flex: 1
@@ -117,7 +119,7 @@ export function TimetableViewerScreen(){
                             }}
                             initialPage={selectedDay}
                         >
-                            { timetable?.days.filter(e=>e.val != null).map(day=>{
+                            { timetable?.days.filter(e=>e.index != null).map(day=>{
                                 return <Day key={day.id} dayId={day.id} classId={route.params.objectId}></Day>
                             }) }
                         </PagerView>

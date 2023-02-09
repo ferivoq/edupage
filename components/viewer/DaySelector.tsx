@@ -38,8 +38,8 @@ export function DaySelector({pagerRef}: Props){
             elevation: 8
         }}
     >
-        { days?.filter(e=>e.val != null).map(day=>{
-            let active = day.val == selectedDay;
+        { days?.filter(e=>e.index != null).map(day=>{
+            let active = day.index == selectedDay;
             return <View
                 style={{
                     marginHorizontal: 31.16/2,
@@ -50,8 +50,8 @@ export function DaySelector({pagerRef}: Props){
             >
                 <TouchableOpacity
                     onPress={()=>{
-                        pagerRef.current?.setPageWithoutAnimation(Number(day.val));
-                        useDaySelectorStore.setState({selectedDay: Number(day.val)})
+                        pagerRef.current?.setPageWithoutAnimation(Number(day.index));
+                        useDaySelectorStore.setState({selectedDay: Number(day.index)})
                     }}
                 >
                     <View

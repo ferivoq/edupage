@@ -17,7 +17,7 @@ export function Day({dayId, classId}: DayProps){
     // note: we don't use it as a hook, so the component doesn't rerender when the value changes.
     let selectedDay = useDaySelectorStore.getState().selectedDay;
 
-    let isSelectedDay = day?.val == selectedDay;
+    let isSelectedDay = day?.index == selectedDay;
     let [show, setShow] = useState<boolean>(isSelectedDay);
 
     useEffect(()=>{
