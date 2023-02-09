@@ -64,14 +64,15 @@ export function Card({card}: Props) {
                         flexDirection: "row"
                     }}
                 >
-                    { !isEntireClass && <Text
-                        style={[textStyle,{
-                            flex: 1,
-                        }]}
-                        numberOfLines={1}
-                    >{getGroupText(card)}</Text> }
                     <Text
                         style={textStyle}
+                        numberOfLines={1}
+                    >{getGroupText(card)}</Text>
+                    <Text
+                        style={[textStyle,{
+                            flex: 1,
+                            textAlign: "right"
+                        }]}
                         numberOfLines={1}
                     >{getClassroomText(card)}</Text>
                 </View>

@@ -51,7 +51,8 @@ export default function App() {
         screenOptions={{
           contentStyle: {
             backgroundColor: "#fff"
-          }
+          },
+          headerShown: false,
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />

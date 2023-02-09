@@ -1,12 +1,22 @@
-import { Link } from '@react-navigation/native';
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { View, Image } from 'react-native';
+import { IdInput } from '../components/home/IdInput';
 
 export function HomeScreen(){
-    let [schoolId, setSchoolId] = useState("");
-
-    return <View>
-        <TextInput onChangeText={setSchoolId} value={schoolId}></TextInput>
-        <Link to={`/${schoolId}/`}>test</Link>
+    return <View
+        style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+        }}
+    >
+        <Image
+            source={require("../assets/icon.png")}
+            style={{
+                width: 100,
+                height: 100,
+                marginBottom: 40,
+            }}
+        />
+        <IdInput />
     </View>
 }
