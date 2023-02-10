@@ -55,6 +55,14 @@ export async function getVersionsFromCache(schoolId: string) {
     return new Versions(parsed.data);
 }
 
+export function doesSchoolExistInCache(schoolId: string){
+    return getVersionsFromCache(schoolId).then((data)=>{
+        return data != null;
+    }).catch(()=>{
+        return false;
+    })
+}
+
 export async function getTimetableFromCache(schoolId: string, id: string) {
     let json = await getCacheEntry(`timetable-${schoolId}-${id}`);
     if (!json){

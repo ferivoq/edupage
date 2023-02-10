@@ -3,38 +3,65 @@ import { getTimetable as getTimetableFromApi, getVersions as getVersionsFromApi 
 import { Timetable } from '../data/timetable'
 import { Versions } from '../data/versions'
 import { getTimetableFromCache, getVersionsFromCache } from '../storage/cache'
+import * as Network from 'expo-network';
+
+export enum ErrorType {
+    offline,
+    unkown
+}
 
 interface GlobalState {
     timetable?: Timetable
     versions?: Versions
     schoolId?: string
     timetableId?: string
-    updateTimetable: (schoolId: string, timetableId: string | undefined)=>void
-    updateTimetableFromCache: (schoolId: string, timetableId: string | undefined)=>void
-    updateTimetableFromApi: (schoolId: string, timetableId: string | undefined)=>void
+    error?: ErrorType
+    updateTimetable: (schoolId: string, timetableId: string | undefined)=>Promise<void>
+    updateTimetableFromCache: (schoolId: string, timetableId: string | undefined)=>Promise<void>
+    updateTimetableFromApi: (schoolId: string, timetableId: string | undefined)=>Promise<void>
     updateTimetableFromFunctions: (
         schoolId: string, timetableId: string | undefined,
         getVersions: (schoolId: string)=>Promise<Versions | null>,
         getTimetable: (schoolId: string, timetableId: string)=>Promise<Timetable | null>
-    )=>void
+    )=>Promise<void>
 }
 
 export const useGlobalStore = create<GlobalState>((set,get)=>({
     async updateTimetable(schoolId, timetableId) {
-        if (schoolId != get().schoolId || timetableId != get().timetableId){
-            set({
-                schoolId,
-                timetable: undefined,
-                versions: undefined
+        let isDifferentTimetable = schoolId != get().schoolId || timetableId != get().timetableId;
+        if (!isDifferentTimetable && get().error == undefined){
+            // if the timetable didn't change and there we no errors fetching it, then we don't need to update
+            return;
+        }
+
+        set({
+            schoolId,
+            timetable: undefined,
+            versions: undefined,
+            error: undefined
+        })
+
+        let networkState = await Network.getNetworkStateAsync();
+        let { isInternetReachable } = networkState;
+
+        get().updateTimetableFromCache(schoolId,timetableId).catch(err=>{
+            if (!isInternetReachable){
+                console.warn(err);
+                set({error: ErrorType.offline})
+            }
+        })
+
+        if (isInternetReachable){
+            get().updateTimetableFromApi(schoolId,timetableId).catch(err=>{
+                console.warn(err);
+                set({error: ErrorType.unkown})
             })
-            get().updateTimetableFromCache(schoolId,timetableId);
-            get().updateTimetableFromApi(schoolId,timetableId);
         }
     },
     async updateTimetableFromFunctions(schoolId, timetableId, getVersions, getTimetable) {
         let versions = await getVersions(schoolId);
         if (!versions){
-            return;
+            throw new Error("Count not get versions");
         }
         set({versions});
         let currentVersion = versions.current;

@@ -9,17 +9,27 @@ import PagerView from 'react-native-pager-view';
 import { Styles } from '../styles/styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LessonModal } from '../components/viewer/LessonModal';
+import { ErrorScreen } from './ErrorScreen';
+import { LoadingScreen } from './LoadingScreen';
 
 export function TimetableViewerScreen(){
     let route = useRoute<TimetableViewerRoute>();
     let { schoolId, timetableId } = route.params;
     let navigation = useNavigation();
 
-    let {timetable, updateTimetable} = useGlobalStore(({timetable, updateTimetable})=>({timetable, updateTimetable}));
+    let {timetable, updateTimetable, error} = useGlobalStore(({timetable, updateTimetable, error})=>({timetable, updateTimetable, error}));
 
     useEffect(() => {
         updateTimetable(schoolId,timetableId);
     }, []);
+
+    if (error != undefined){
+        return <ErrorScreen />
+    }
+
+    if (!timetable){
+        return <LoadingScreen />
+    }
 
     let _class = timetable?.classes.find(e=>e.id == route.params.objectId);
 

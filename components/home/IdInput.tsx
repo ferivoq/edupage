@@ -4,6 +4,8 @@ import FeatherIcons from '@expo/vector-icons/Feather';
 import { useNavigation } from "../../navigation";
 import { doesSchoolExist } from "../../data/api";
 import { useGlobalStore } from "../../state/GlobalStore";
+import * as Network from 'expo-network';
+import { doesSchoolExistInCache } from "../../storage/cache";
 
 interface State {
     schoolId: string
@@ -22,8 +24,11 @@ let useStore = create<State>(set=>({
         })
         clearTimeout(validationTimeout);
         if (schoolId != ""){
-            validationTimeout = setTimeout(()=>{
-                doesSchoolExist(schoolId).then(isValidSchoolId=>{
+            validationTimeout = setTimeout(async ()=>{
+                let networkState = await Network.getNetworkStateAsync();
+                let { isInternetReachable } = networkState;
+                let checkSchool = isInternetReachable ? doesSchoolExist : doesSchoolExistInCache;
+                checkSchool(schoolId).then(isValidSchoolId=>{
                     set({
                         isValidSchoolId
                     })

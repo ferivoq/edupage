@@ -6,150 +6,122 @@ import seedrandom from 'seedrandom';
 import { useGlobalStore } from '../state/GlobalStore';
 import { ControlPanel } from '../components/schoolHome/ControlPanel';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FeatherIcons from '@expo/vector-icons/Feather';
+import { NoTimetablesScreen } from './NoTimetablesScreen';
+import { ErrorScreen } from './ErrorScreen';
+import { LoadingScreen } from './LoadingScreen';
 
 export function SchoolHomeScreen(){
     let route = useRoute<SchoolHomeRoute>();
     let navigation = useNavigation();
     let schoolId = route.params.schoolId;
-    let {timetable, versions, updateTimetable} = useGlobalStore(({versions, timetable, updateTimetable})=>({versions,timetable,updateTimetable}));
+    let {timetable, versions, updateTimetable, error} = useGlobalStore(({versions, timetable, updateTimetable, error})=>({versions,timetable,updateTimetable,error}));
 
     useEffect(() => {
         updateTimetable(schoolId,undefined);
     }, []);
 
-    if (versions && !versions.current){
-        return <View
-            style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-            }}
-        >
-            <FeatherIcons name='meh' color={"#000"} size={60} />
-            <Text
-                style={{
-                    fontWeight: 'bold',
-                    fontSize: 23,
-                    marginVertical: 25,
-                    width: 120,
-                    textAlign: 'center'
-                }}
-            >No timetables available</Text>
-            <View
-                style={{
-                    backgroundColor: "#2aa2a2",
-                    borderRadius: 12,
-                    overflow: 'hidden',
-                }}
-            >
-                <TouchableNativeFeedback
-                    onPress={()=>{
-                        navigation.pop();
-                    }}
-                >
-                    <View
-                        style={{
-                            height: 45,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            flexDirection: 'row',
-                            paddingHorizontal: 12
-                        }}
-                    >
-                        <FeatherIcons name='arrow-left' color={"#fff"} size={25} />
-                        <Text
-                            style={{
-                                color: "#fff",
-                                fontWeight: 'bold',
-                                fontSize: 16,
-                                marginLeft: 7,
-                            }}
-                        >Go back</Text>
-                    </View>
-                </TouchableNativeFeedback>
-            </View>
-        </View>
+    if (error != undefined){
+        return <ErrorScreen />
     }
 
-    return <ScrollView>
-        <SafeAreaView>
-            <ControlPanel />
-            <View
-                style={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    justifyContent: 'center',
-                }}
-            >
-            { timetable?.classes.map(_class=>{
-                return <View
-                    key={_class.id}    
+    if (versions && !versions.current){
+        return <NoTimetablesScreen />
+    }
+
+    return <View
+        style={{
+            flex: 1,
+        }}
+    >
+        <View
+            style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%'
+            }}
+        >
+            { (!versions || !timetable) && <LoadingScreen /> }
+        </View>
+         <ScrollView>
+            <SafeAreaView>
+                <ControlPanel />
+                <View
                     style={{
-                        borderWidth: 2,
-                        borderColor: "#ECECEC",
-                        borderRadius: 13.66,
-                        overflow: 'hidden',
-                        marginBottom: 20.66,
-                        marginHorizontal: 10.33,
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
                     }}
                 >
-                    <View
+                
+                { timetable?.classes.map(_class=>{
+                    return <View
+                        key={_class.id}    
                         style={{
-                            width: 87.33,
-                            height: 87.33,
+                            borderWidth: 2,
+                            borderColor: "#ECECEC",
+                            borderRadius: 13.66,
+                            overflow: 'hidden',
+                            marginBottom: 20.66,
+                            marginHorizontal: 10.33,
                         }}
                     >
-                        <Link to={`/${schoolId}/timetable/${versions?.current?.id}/class/${_class.id}`}>
-                            <TouchableNativeFeedback
-                                onPress={()=>{
-                                    navigation.navigate("TimetableViewer", {
-                                        schoolId,
-                                        type: "class",
-                                        timetableId: String(versions?.current?.id),
-                                        objectId: String(_class.id)
-                                    });
-                                }}
-                                style={{
-                                    backgroundColor: 'red'
-                                }}
-                            >
-                                <View
+                        <View
+                            style={{
+                                width: 87.33,
+                                height: 87.33,
+                            }}
+                        >
+                            <Link to={`/${schoolId}/timetable/${versions?.current?.id}/class/${_class.id}`}>
+                                <TouchableNativeFeedback
+                                    onPress={()=>{
+                                        navigation.navigate("TimetableViewer", {
+                                            schoolId,
+                                            type: "class",
+                                            timetableId: String(versions?.current?.id),
+                                            objectId: String(_class.id)
+                                        });
+                                    }}
                                     style={{
-                                        width: 87.33,
-                                        height: 87.33,
-                                        justifyContent: "center",
-                                        alignItems: "center",
+                                        backgroundColor: 'red'
                                     }}
                                 >
                                     <View
                                         style={{
-                                            position: "absolute",
-                                            borderRadius: 49,
-                                            backgroundColor: `hsl(${Math.floor(seedrandom(_class.id)()*360)}, 100%, 88%)`,
-                                            width: 49,
-                                            height: 49,
+                                            width: 87.33,
+                                            height: 87.33,
+                                            justifyContent: "center",
+                                            alignItems: "center",
                                         }}
                                     >
-                                        
+                                        <View
+                                            style={{
+                                                position: "absolute",
+                                                borderRadius: 49,
+                                                backgroundColor: `hsl(${Math.floor(seedrandom(_class.id)()*360)}, 100%, 88%)`,
+                                                width: 49,
+                                                height: 49,
+                                            }}
+                                        >
+                                            
+                                        </View>
+                                        <Text
+                                            style={{
+                                                fontSize: 18.38,
+                                                color: "#000000A6",
+                                                fontWeight: "bold",
+                                                zIndex: 1,
+                                                textAlign: 'center'
+                                            }}
+                                            numberOfLines={2}
+                                        >{_class.shortName}</Text>
                                     </View>
-                                    <Text
-                                        style={{
-                                            fontSize: 18.38,
-                                            color: "#000000A6",
-                                            fontWeight: "bold",
-                                            zIndex: 1,
-                                            textAlign: 'center'
-                                        }}
-                                        numberOfLines={2}
-                                    >{_class.shortName}</Text>
-                                </View>
-                            </TouchableNativeFeedback>
-                        </Link>
+                                </TouchableNativeFeedback>
+                            </Link>
+                        </View>
                     </View>
+                }) }
                 </View>
-            }) }
-            </View>
-        </SafeAreaView>
-    </ScrollView>
+            </SafeAreaView>
+        </ScrollView>
+    </View>
 }
