@@ -10,11 +10,12 @@ export function HomeScreen(){
         }}
     >
         <Image
-            source={require("../assets/icon.png")}
+            source={require("../assets/homepage.png")}
+            resizeMode={"contain"}
             style={{
-                width: 100,
-                height: 100,
-                marginBottom: 40,
+                width: "100%",
+                height: "30%",
+                marginBottom: 50,
             }}
         />
         <IdInput />
