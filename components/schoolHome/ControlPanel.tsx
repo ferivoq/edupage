@@ -11,6 +11,10 @@ export function ControlPanel(){
     let backgroundColor = "#EDEDED";
     let color = "#515151";
     let borderRadius = 10.33;
+
+    if (!versions || !versions.current) {
+        return <></>
+    }
     
     return <View
         style={{
@@ -30,7 +34,7 @@ export function ControlPanel(){
                 style={{
                     borderRadius,
                     overflow: "hidden",
-                    flexShrink: 1,
+                    flex: 1,
                 }}
             >
                 <TouchableNativeFeedback>
@@ -49,7 +53,7 @@ export function ControlPanel(){
                                 color,
                                 fontSize: 16
                             }}
-                        >{versions?.current?.text}</Text>
+                        >{versions.current.text}</Text>
                     </View>
                 </TouchableNativeFeedback>
             </View>

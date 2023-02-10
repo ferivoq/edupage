@@ -1,11 +1,42 @@
-import { useState } from "react";
-import { TextInput, View, Text } from "react-native";
+import { TextInput, View, Text, TouchableNativeFeedback, ActivityIndicator } from "react-native";
 import { create } from "zustand";
 import FeatherIcons from '@expo/vector-icons/Feather';
-import { Link } from "@react-navigation/native";
+import { useNavigation } from "../../navigation";
+import { doesSchoolExist } from "../../data/api";
+import { useGlobalStore } from "../../state/GlobalStore";
+
+interface State {
+    schoolId: string
+    isValidSchoolId: boolean | undefined
+    setSchoolId: (id: string)=>void
+}
+let validationTimeout: NodeJS.Timeout;
+
+let useStore = create<State>(set=>({
+    schoolId: "",
+    isValidSchoolId: undefined,
+    setSchoolId(schoolId){
+        set({
+            schoolId,
+            isValidSchoolId: undefined
+        })
+        clearTimeout(validationTimeout);
+        if (schoolId != ""){
+            validationTimeout = setTimeout(()=>{
+                doesSchoolExist(schoolId).then(isValidSchoolId=>{
+                    set({
+                        isValidSchoolId
+                    })
+                })
+            },300)
+        }
+    }
+}))
 
 export function IdInput(){
-    let [schoolId, setSchoolId] = useState("");
+    let { schoolId, isValidSchoolId, setSchoolId } = useStore();
+
+    let navigation = useNavigation();
     
     let textStyle = {
         fontSize: 16,
@@ -15,12 +46,28 @@ export function IdInput(){
     let inputHeight = 45;
     let borderRadius = 12;
 
+    let buttonColor = "#4d4d4d";
+
+    if (isValidSchoolId == true){
+        buttonColor = "#2aa2a2";
+    }
+    else if (isValidSchoolId == false){
+        buttonColor = "#d74942";
+    }
+
+    let isLoading = isValidSchoolId == undefined;
+
+    if (schoolId == ""){
+        isLoading = false;
+    }
+
     return <View
         style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-            maxWidth: "100%"
+            maxWidth: "100%",
+            paddingHorizontal: 7,
         }}
     >
         <View
@@ -32,6 +79,7 @@ export function IdInput(){
                 height: inputHeight,
                 paddingHorizontal: 14,
                 borderRadius,
+                flexShrink: 1
             }}
         >
             <Text
@@ -45,12 +93,13 @@ export function IdInput(){
                         padding: 0,
                         margin: 0,
                         flexShrink: 1,
-                        color: "#2aa2a2",
+                        color: isValidSchoolId == false ? "#d74942" : "#2aa2a2",
                         fontWeight: "bold",
                     }
                 ]}
                 onChangeText={(text)=>{
-                    setSchoolId(text.toLocaleLowerCase())
+                    let schoolId = text.toLocaleLowerCase();
+                    setSchoolId(schoolId);
                 }}
                 placeholder={"id"}
                 placeholderTextColor={"#6c9393"}
@@ -62,18 +111,34 @@ export function IdInput(){
         </View>
         <View
             style={{
-                backgroundColor: "#2aa2a2",
-                height: inputHeight,
-                width: inputHeight,
-                justifyContent: "center",
-                alignItems: "center",
+                borderRadius,
+                overflow: "hidden",
                 marginLeft: 7,
-                borderRadius
             }}
         >
-            <Link to={`/${schoolId}/`}>
-                <FeatherIcons name="arrow-right" size={25} color={"#fff"}></FeatherIcons>
-            </Link>
+            <TouchableNativeFeedback
+                onPress={()=>{
+                    if (isValidSchoolId){
+                        useGlobalStore.getState().updateTimetable(schoolId,undefined);
+                        navigation.navigate("SchoolHome",{
+                            schoolId
+                        })
+                    }
+                }}
+            >
+                <View
+                    style={{
+                        backgroundColor: buttonColor,
+                        height: inputHeight,
+                        width: inputHeight,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    { isLoading && <ActivityIndicator size={"small"} color={"#fff"} /> }
+                    { !isLoading && <FeatherIcons name={isValidSchoolId == false ? "x" : "arrow-right"} size={25} color={"#fff"}></FeatherIcons> }
+                </View>
+            </TouchableNativeFeedback>
         </View>
     </View>
 }

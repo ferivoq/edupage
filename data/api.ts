@@ -1,3 +1,4 @@
+import { saveToCache } from "../storage/cache";
 import { Timetable, TimetableSchema } from "./timetable";
 import { Versions, VersionsSchema } from "./versions";
 
@@ -27,15 +28,24 @@ export function getVersions(schoolId: string){
         "https://"+schoolId+".edupage.org/timetable/server/ttviewer.js?__func=getTTViewerData",
         [schoolYear]
     ).then(json=>{
+        saveToCache(`versions-${schoolId}`,json);
         let parsed = VersionsSchema.parse(json);
         return new Versions(parsed);
     })
 }
-export function getTimetableData(schoolId: string, id: string){
+export function doesSchoolExist(schoolId: string){
+    return getVersions(schoolId).then(()=>{
+        return true;
+    }).catch(()=>{
+        return false;
+    })
+}
+export function getTimetable(schoolId: string, id: string){
     return makeRequest(
         "https://"+schoolId+".edupage.org/timetable/server/regulartt.js?__func=regularttGetData",
         [id]
     ).then(json=>{
+        saveToCache(`timetable-${schoolId}-${id}`,json);
         let parsed = TimetableSchema.parse(json);
         return new Timetable(parsed);
     })

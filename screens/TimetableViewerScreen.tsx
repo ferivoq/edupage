@@ -1,7 +1,7 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { ScrollView, Text, TouchableNativeFeedback, View } from 'react-native';
-import type { TimetableViewerProps } from '../App';
-import { createRef } from 'react';
+import { TimetableViewerRoute, useNavigation } from '../navigation';
+import { createRef, useEffect } from 'react';
 import { useGlobalStore } from '../state/GlobalStore';
 import { DaySelector, useDaySelectorStore } from '../components/viewer/DaySelector';
 import { Day } from '../components/viewer/Day';
@@ -11,10 +11,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LessonModal } from '../components/viewer/LessonModal';
 
 export function TimetableViewerScreen(){
-    let route = useRoute<TimetableViewerProps['route']>();
-    let navigation = useNavigation<TimetableViewerProps['navigation']>();
+    let route = useRoute<TimetableViewerRoute>();
+    let { schoolId, timetableId } = route.params;
+    let navigation = useNavigation();
 
-    let timetable = useGlobalStore((state)=>state.timetable);
+    let {timetable, updateTimetable} = useGlobalStore(({timetable, updateTimetable})=>({timetable, updateTimetable}));
+
+    useEffect(() => {
+        updateTimetable(schoolId,timetableId);
+    }, []);
 
     let _class = timetable?.classes.find(e=>e.id == route.params.objectId);
 
