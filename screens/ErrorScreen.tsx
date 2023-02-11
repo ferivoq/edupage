@@ -4,6 +4,16 @@ import { PrimaryButton } from "../components/PrimaryButton";
 import FeatherIcons from '@expo/vector-icons/Feather';
 import { SecondaryButton } from "../components/SecondaryButton";
 import { ErrorType, useGlobalStore } from "../state/GlobalStore";
+import { CenteredFillView } from "../styles/styles";
+import styled from "styled-components/native";
+
+export const ErrorText = styled.Text`
+    font-weight: bold;
+    font-size: 23px;
+    margin: 25px 0;
+    width: 120px;
+    text-align: center;
+`
 
 export function ErrorScreen(){
 
@@ -15,23 +25,9 @@ export function ErrorScreen(){
         errorMessage = "There is no internet";
     }
 
-    return <View
-        style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-        }}
-    >
+    return <CenteredFillView>
         <FeatherIcons name='alert-triangle' color={"#000"} size={60} />
-        <Text
-            style={{
-                fontWeight: 'bold',
-                fontSize: 23,
-                marginVertical: 25,
-                width: 120,
-                textAlign: 'center'
-            }}
-        >{errorMessage}</Text>
+        <ErrorText>{errorMessage}</ErrorText>
         <PrimaryButton
             onPress={()=>{
                 let {schoolId, timetableId, updateTimetable} = useGlobalStore.getState();
@@ -56,5 +52,5 @@ export function ErrorScreen(){
                 text='Go back'
             />
         </View> }
-    </View>
+    </CenteredFillView>
 }

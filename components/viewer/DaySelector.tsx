@@ -1,8 +1,35 @@
-import { MutableRefObject, Ref, RefObject } from 'react';
-import { View, Text, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
+import { RefObject } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native'
 import PagerView from 'react-native-pager-view';
 import { create } from 'zustand';
 import { useGlobalStore } from '../../state/GlobalStore'
+import styled from '../../styles/styled-components';
+import { Centered } from '../../styles/styles';
+
+const Container = styled.View`
+    ${Centered}
+    width: 100%;
+    background-color: ${props=>props.theme.colors.background};
+    flex-direction: row;
+    height: 50px;
+    elevation: 8;
+`
+const DayOuter = styled.View`
+    margin: 0 15px;
+`
+let circleSize = 30;
+const DayInner = styled.View<{ isActive: boolean }>`
+    ${Centered}
+    width: ${circleSize}px;
+    height: ${circleSize}px;
+    border-radius: ${circleSize}px;
+    background-color: ${({isActive})=>isActive ? "#0074D921" : "transparent"};
+`
+const DayText = styled.Text<{ isActive: boolean }>`
+    font-size: 15px;
+    font-weight: bold;
+    color: ${({isActive})=>isActive ? "#0074D9" : "#3C3C3C"};
+`
 
 interface Props {
     pagerRef: RefObject<PagerView>
@@ -20,60 +47,21 @@ export function DaySelector({pagerRef}: Props){
     let days = useGlobalStore(state=>state.timetable?.days);
     let selectedDay = useDaySelectorStore(state=>state.selectedDay);
 
-    return <View
-        style={{
-            width: "100%",
-            backgroundColor: "#fff",
-            flexDirection: 'row',
-            justifyContent: "center",
-            alignItems: "center",
-            height: 50,
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.30,
-            shadowRadius: 4.65,
-            elevation: 8
-        }}
-    >
+    return <Container>
         { days?.filter(e=>e.index != null).map(day=>{
-            let active = day.index == selectedDay;
-            return <View
-                style={{
-                    marginHorizontal: 31.16/2,
-                    width: 35.33,
-                    height: 35.33,
-                }}
-                key={day.id}
-            >
+            let isActive = day.index == selectedDay;
+            return <DayOuter key={day.id}>
                 <TouchableOpacity
                     onPress={()=>{
                         pagerRef.current?.setPageWithoutAnimation(Number(day.index));
                         useDaySelectorStore.setState({selectedDay: Number(day.index)})
                     }}
                 >
-                    <View
-                        style={{
-                            width: 30.33,
-                            height: 30.33,
-                            borderRadius: 30.33,
-                            backgroundColor: active ? "#0074D921" : "transparent",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 15.16,
-                                fontWeight: "bold",
-                                color: active ? "#0074D9" : "#3C3C3C"
-                            }}
-                        >{day.shortName}</Text>
-                    </View>
+                    <DayInner isActive={isActive}>
+                        <DayText isActive={isActive}>{day.shortName}</DayText>
+                    </DayInner>
                 </TouchableOpacity>
-            </View>
+            </DayOuter>
         }) }
-    </View>
+    </Container>
 }

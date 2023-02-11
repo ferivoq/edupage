@@ -1,7 +1,37 @@
 import { Modal, View, Text, TouchableWithoutFeedback } from "react-native";
 import { create } from "zustand";
-import { CardData, getCardColor, getClassroomText, getGroupText, getShortClassroomText, getTeacherText } from "../../data/cards";
+import { CardData, getClassroomText, getGroupText, getShortClassroomText, getTeacherText } from "../../data/cards";
 import { useGlobalStore } from "../../state/GlobalStore";
+import styled from "../../styles/styled-components";
+import { Centered, getCardColor } from "../../styles/styles";
+
+const Overlay = styled.View`
+    ${Centered}
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.8);
+`
+const InnerContainer = styled.View<{ card: CardData }>`
+    border-radius: 18px;
+    width: 100%;
+    max-width: 266px;
+    padding: 18px;
+    elevation: 1;
+    background-color: ${({card,theme})=>getCardColor(card,theme)};
+`
+const SubjectText = styled.Text`
+    font-size: 19px;
+    text-align: center;
+`
+const QuickInfo = styled.View`
+    ${Centered}
+    flex-direction: row;
+    margin: 12px 0;
+`
+const PeriodText = styled.Text`
+    font-weight: bold;
+    font-size: 21px;
+    margin-right: 11px;
+`
 
 interface LessonModalState {
     cardData?: CardData
@@ -44,63 +74,27 @@ function ModalInner(props: {card: CardData}){
         [timetable.strings.week,card.week.name],
     ]
 
-    return <View
-        style={{
-            borderRadius: 17.66,
-            backgroundColor: getCardColor(card),
-            padding: 18.66,
-            maxWidth: 266.66,
-            width: "100%",
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 1,
-            },
-            shadowOpacity: 0.18,
-            shadowRadius: 1.00,
-            elevation: 1,
-        }}
-    >
-        <Text
-            style={{
-                fontSize: 19,
-                textAlign: "center"
-            }}
-        >{card.subject.name}</Text>
-        <View
-            style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                marginVertical: 12.33
-            }}
-        >
-            <Text
-                style={{
-                    fontWeight: "bold",
-                    fontSize: 21.33,
-                    marginRight: 11.16
-                }}
-            >{periodText}</Text>
+    return <InnerContainer card={card}>
+        <SubjectText>{card.subject.name}</SubjectText>
+        <QuickInfo>
+            <PeriodText>{periodText}</PeriodText>
             <View>
                 <Text>{`${startPeriod.startTime}-${endPeriod.endTime}`}</Text>
                 <Text style={{opacity: 0.75}}>{getShortClassroomText(card)}</Text>
             </View>
-        </View>
+        </QuickInfo>
         { details.map(([title,text])=>{
-            return <Text
-                key={title}
-            >
+            return <Text key={title}>
                 <Text style={{fontWeight: "bold"}}>{title}</Text>
                 <Text>{": "+text}</Text>
             </Text>
         }) }
-    </View>
+    </InnerContainer>
 }
 
 export function LessonModal(){
 
-    let { cardData: card, show, hide } = useLessonModalStore();
+    let { cardData: card, hide } = useLessonModalStore();
 
     return <Modal
         animationType="fade"
@@ -111,16 +105,9 @@ export function LessonModal(){
         <TouchableWithoutFeedback
             onPress={hide}
         >
-            <View
-                style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}
-            >
+            <Overlay>
                 { card && <ModalInner card={card} /> }
-            </View>
+            </Overlay>
         </TouchableWithoutFeedback>
     </Modal>
 }

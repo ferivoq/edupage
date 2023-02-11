@@ -1,4 +1,5 @@
 import seedrandom from "seedrandom";
+import { Theme } from "../styles/theme";
 import { Classroom } from "./classrooms";
 import { Division } from "./divisions";
 import { Entry } from "./entries";
@@ -44,25 +45,21 @@ export function isPlaceholderCardData(data: CardData | PlaceholderCardData): dat
     return !isCardData(data);
 }
 
+function joinUnique(arr: string[]){
+    return [...new Set(arr)].join(", ");
+}
+
 export function getGroupText(card: CardData){
-    return [...new Set(card.groups.map(e=>e.name))].join(", ");
+    return joinUnique(card.groups.map(e=>e.name));
 }
 export function getTeacherText(card: CardData){
-    return [...new Set(card.teachers.map(e=>e.name))].join(", ");
+    return joinUnique(card.teachers.map(e=>e.name));
 }
 export function getClassroomText(card: CardData){
-    return [...new Set(card.classrooms.map(e=>e.name))].join(", ");
+    return joinUnique(card.classrooms.map(e=>e.name));
 }
 export function getShortClassroomText(card: CardData){
-    return [...new Set(card.classrooms.map(e=>e.shortName))].join(", ");
-}
-
-export function getCardColor(card: CardData){
-    if (card.groups[0]?.isEntireClass){
-        return "#EDEDED";
-    }
-
-    return `hsl(${Math.floor(seedrandom(card.groups[0]?.id)()*300)}, 100%, 75%)`;
+    return joinUnique(card.classrooms.map(e=>e.shortName));
 }
 
 function findCommonDivision(timetable: Timetable,cards: CardData[]): Division | undefined {

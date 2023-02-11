@@ -1,14 +1,8 @@
 import { View, Text, TouchableNativeFeedback, ActivityIndicator } from "react-native";
+import { CenteredFillView } from "../styles/styles";
 
 export function LoadingScreen(){
-    return <View
-        style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-            alignSelf: 'stretch'
-        }}
-    >
+    return <CenteredFillView>
         <ActivityIndicator color={"#000"} size={"large"}></ActivityIndicator>
-    </View>
+    </CenteredFillView>
 }

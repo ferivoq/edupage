@@ -2,81 +2,68 @@ import { Link } from "@react-navigation/native";
 import { TouchableNativeFeedback, View, Text } from "react-native";
 import { useGlobalStore } from "../../state/GlobalStore";
 import FeatherIcons from '@expo/vector-icons/Feather';
+import { Centered, CenteredView } from "../../styles/styles";
+import styled from "../../styles/styled-components";
+
+let size = 36.5;
+let borderRadius = 11;
+
+let color = "#515151";
+
+const ControlPanelOuter = styled.View`
+    ${Centered}
+    flex-direction: row;
+    width: 305px;
+    margin: 20px;
+`
+const VersionText = styled.Text`
+    color: ${color};
+    font-size: 16px;
+`
+const SettingsButton = styled.View`
+    ${Centered}
+    background-color: ${props=>props.theme.colors.lighterElement};
+    border-radius: ${borderRadius}px;
+    width: ${size}px;
+    height: ${size}px;
+`
+const VersionOuterContainer = styled.View`
+    border-radius: ${borderRadius}px;
+    overflow: hidden;
+    flex: 1;
+    margin-right: 7px;
+`
+const VersionInnerContainer = styled.View`
+    ${Centered}
+    height: ${size}px;
+    padding: 0 20px;
+    background-color: ${props=>props.theme.colors.lighterElement};
+`
 
 export function ControlPanel(){
 
     let versions = useGlobalStore(state=>state.versions);
 
-    let size = 36.33;
-    let backgroundColor = "#EDEDED";
-    let color = "#515151";
-    let borderRadius = 10.33;
-
     if (!versions || !versions.current) {
         return <></>
     }
     
-    return <View
-        style={{
-            alignItems: "center"
-        }}
-    >
-        <View
-            style={{
-                flexDirection: "row",
-                width: 315,
-                alignItems: 'center',
-                justifyContent: "center",
-                margin: 20.66,
-            }}
-        >
-            <View
-                style={{
-                    borderRadius,
-                    overflow: "hidden",
-                    flex: 1,
-                }}
-            >
+    return <CenteredView>
+        <ControlPanelOuter>
+            <VersionOuterContainer>
                 <TouchableNativeFeedback>
-                    <View
-                        style={{
-                            height: size,
-                            backgroundColor,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            paddingHorizontal: 20,
-                        }}
-                    >
-                        <Text
+                    <VersionInnerContainer>
+                        <VersionText
                             numberOfLines={1}
-                            style={{
-                                color,
-                                fontSize: 16
-                            }}
-                        >{versions.current.text}</Text>
-                    </View>
+                        >{versions.current.text}</VersionText>
+                    </VersionInnerContainer>
                 </TouchableNativeFeedback>
-            </View>
-            <View
-                style={{
-                    marginLeft: 7,
-                }}
-            >
-                <Link to={"/"}>
-                    <View
-                        style={{
-                            backgroundColor,
-                            width: size,
-                            height: size,
-                            borderRadius,
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <FeatherIcons name="settings" size={18} color={color}></FeatherIcons>
-                    </View>
-                </Link>
-            </View>
-        </View>
-    </View>
+            </VersionOuterContainer>
+            <Link to={"/"}>
+                <SettingsButton>
+                    <FeatherIcons name="settings" size={18} color={color}></FeatherIcons>
+                </SettingsButton>
+            </Link>
+        </ControlPanelOuter>
+    </CenteredView>
 }

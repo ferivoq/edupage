@@ -6,6 +6,8 @@ import { doesSchoolExist } from "../../data/api";
 import { useGlobalStore } from "../../state/GlobalStore";
 import * as Network from 'expo-network';
 import { doesSchoolExistInCache } from "../../storage/cache";
+import styled, { css } from "../../styles/styled-components";
+import { Centered } from "../../styles/styles";
 
 interface State {
     schoolId: string
@@ -38,27 +40,65 @@ let useStore = create<State>(set=>({
     }
 }))
 
+const inputHeight = 45;
+const borderRadius = 12;
+
+const Container = styled.View`
+    ${Centered}
+    flex-direction: row;
+    max-width: 100%;
+    padding: 0 7px;
+`
+const UrlContainer = styled.View`
+    ${Centered}
+    flex-direction: row;
+    background-color: ${props=>props.theme.colors.lightElement};
+    height: ${inputHeight}px;
+    border-radius: ${borderRadius}px;
+    padding: 0 14px;
+    flex-shrink: 1;
+`
+const TextStyle = css`
+    font-size: 16px;
+    color: #000;
+`
+const UrlText = styled.Text`
+    ${TextStyle}
+`
+const Input = styled.TextInput<{ isValidSchoolId: boolean | undefined }>`
+    ${TextStyle}
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 1;
+    font-weight: bold;
+    color: ${({ isValidSchoolId, theme })=>isValidSchoolId == false ? theme.colors.error : theme.colors.primary};
+`
+const ButtonOuter = styled.View`
+    border-radius: ${borderRadius}px;
+    overflow: hidden;
+    margin-left: 7px;
+`
+const ButtonInner = styled.View<{ isValidSchoolId: boolean | undefined }>`
+    ${Centered}
+    height: ${inputHeight}px;
+    width: ${inputHeight}px;
+    background-color: black;
+    background-color: ${({isValidSchoolId, theme})=>{
+        if (isValidSchoolId == true){
+            return theme.colors.primary;
+        } else if (isValidSchoolId == false){
+            return theme.colors.error;
+        } else if (isValidSchoolId == undefined){
+            return "#4d4d4d";
+        }
+    }};
+`
+
 export function IdInput(){
     let { schoolId, isValidSchoolId, setSchoolId } = useStore();
 
     let navigation = useNavigation();
-    
-    let textStyle = {
-        fontSize: 16,
-        color: "#000"
-    }
-
-    let inputHeight = 45;
-    let borderRadius = 12;
-
-    let buttonColor = "#4d4d4d";
-
-    if (isValidSchoolId == true){
-        buttonColor = "#2aa2a2";
-    }
-    else if (isValidSchoolId == false){
-        buttonColor = "#d74942";
-    }
 
     let isLoading = isValidSchoolId == undefined;
 
@@ -66,42 +106,11 @@ export function IdInput(){
         isLoading = false;
     }
 
-    return <View
-        style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            maxWidth: "100%",
-            paddingHorizontal: 7,
-        }}
-    >
-        <View
-            style={{
-                flexDirection: 'row',
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#EDEDED",
-                height: inputHeight,
-                paddingHorizontal: 14,
-                borderRadius,
-                flexShrink: 1
-            }}
-        >
-            <Text
-                style={textStyle}
-            >http://</Text>
-            <TextInput
-                style={[
-                    textStyle,
-                    {
-                        textAlign: "center",
-                        padding: 0,
-                        margin: 0,
-                        flexShrink: 1,
-                        color: isValidSchoolId == false ? "#d74942" : "#2aa2a2",
-                        fontWeight: "bold",
-                    }
-                ]}
+    return <Container>
+        <UrlContainer>
+            <UrlText>http://</UrlText>
+            <Input
+                isValidSchoolId={isValidSchoolId}
                 onChangeText={(text)=>{
                     let schoolId = text.toLocaleLowerCase();
                     setSchoolId(schoolId);
@@ -109,18 +118,10 @@ export function IdInput(){
                 placeholder={"id"}
                 placeholderTextColor={"#6c9393"}
                 value={schoolId}
-            ></TextInput>
-            <Text
-                style={textStyle}
-            >.edupage.org</Text>
-        </View>
-        <View
-            style={{
-                borderRadius,
-                overflow: "hidden",
-                marginLeft: 7,
-            }}
-        >
+            ></Input>
+            <UrlText>.edupage.org</UrlText>
+        </UrlContainer>
+        <ButtonOuter>
             <TouchableNativeFeedback
                 onPress={()=>{
                     if (isValidSchoolId){
@@ -131,19 +132,11 @@ export function IdInput(){
                     }
                 }}
             >
-                <View
-                    style={{
-                        backgroundColor: buttonColor,
-                        height: inputHeight,
-                        width: inputHeight,
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
+                <ButtonInner isValidSchoolId={isValidSchoolId}>
                     { isLoading && <ActivityIndicator size={"small"} color={"#fff"} /> }
                     { !isLoading && <FeatherIcons name={isValidSchoolId == false ? "x" : "arrow-right"} size={25} color={"#fff"}></FeatherIcons> }
-                </View>
+                </ButtonInner>
             </TouchableNativeFeedback>
-        </View>
-    </View>
+        </ButtonOuter>
+    </Container>
 }

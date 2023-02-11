@@ -1,8 +1,16 @@
 import { View } from "react-native";
 import { CardData, getCardKey, getCardsInRow, PlaceholderCardData } from "../../data/cards";
 import { useGlobalStore } from "../../state/GlobalStore";
-import { Styles } from "../../styles/styles";
+import styled from "../../styles/styled-components";
 import { Card } from "./Card";
+import { Sizes } from "./Sizes";
+
+const Container = styled.View`
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: ${Sizes.gap}px;
+    height: ${Sizes.rowHeight}px;
+`
 
 interface Props {
     dayId: string
@@ -18,16 +26,9 @@ export function Row({dayId, periodId, classId}: Props){
         cards = getCardsInRow(timetable,dayId,periodId,classId);
     }
 
-    return <View
-        style={{
-            height: Styles.viewer.rowHeight,
-            width: "100%",
-            marginBottom: Styles.viewer.spacing,
-            flexDirection: "row"
-        }}
-    >
+    return <Container>
         { cards.map(card=>{
             return <Card key={getCardKey(card)} card={card}></Card>
         }) }
-    </View>
+    </Container>
 }

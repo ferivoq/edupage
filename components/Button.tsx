@@ -1,7 +1,33 @@
 import { TouchableNativeFeedback, View, Text } from "react-native";
 import FeatherIcons from '@expo/vector-icons/Feather';
+import styled from "styled-components/native";
+import { Centered } from "../styles/styles";
 
 type FeatherIconsName = React.ComponentProps<typeof FeatherIcons>['name'];
+
+const OuterContainer = styled.View<{ backgroundColor: string }>`
+    background-color: ${props=>props.backgroundColor};
+    border-radius: 12px;
+    overflow: hidden;
+`
+const InnerContainer = styled.View`
+    ${Centered}
+    height: 45px;
+    flex-direction: row;
+    padding: 0 12px;
+`
+const ButtonText = styled.Text<{ color: string }>`
+    color: ${props=>props.color};
+    font-weight: bold;
+    font-size: 16px;
+    margin-left: 7px;
+`
+
+export interface SpecializedButtonProps {
+    onPress: ()=>void
+    icon: FeatherIconsName
+    text: string
+}
 
 interface ButtonProps {
     onPress: ()=>void
@@ -11,42 +37,15 @@ interface ButtonProps {
     color: string
 }
 
-export interface SpecializedButtonProps {
-    onPress: ()=>void
-    icon: FeatherIconsName
-    text: string
-}
-
 export function Button({onPress, icon, text, backgroundColor, color}: ButtonProps){
-    return <View
-        style={{
-            backgroundColor,
-            borderRadius: 12,
-            overflow: 'hidden',
-        }}
-    >
+    return <OuterContainer backgroundColor={backgroundColor}>
         <TouchableNativeFeedback
             onPress={onPress}
         >
-            <View
-                style={{
-                    height: 45,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    paddingHorizontal: 12
-                }}
-            >
+            <InnerContainer>
                 <FeatherIcons name={icon} color={color} size={25} />
-                <Text
-                    style={{
-                        color,
-                        fontWeight: 'bold',
-                        fontSize: 16,
-                        marginLeft: 7,
-                    }}
-                >{text}</Text>
-            </View>
+                <ButtonText color={color}>{text}</ButtonText>
+            </InnerContainer>
         </TouchableNativeFeedback>
-    </View>
+    </OuterContainer>
 }

@@ -29,18 +29,10 @@ export function Day({dayId, classId}: DayProps){
     },[]);
 
     if (!show){
-        return <View
-            style={{
-                width: "100%",
-            }}
-        ></View>
+        return <View></View>
     }
 
-    return <View
-        style={{
-            width: "100%",
-        }}
-    >
+    return <View>
         { timetable?.periods.map(period=>{
             return <Row key={period.id} periodId={period.id} dayId={dayId} classId={classId}></Row>
         }) }
