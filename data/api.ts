@@ -3,6 +3,13 @@ import { Timetable, TimetableSchema } from "./timetable";
 import { Versions, VersionsSchema } from "./versions";
 
 function makeRequest(url: string, params: any[]){
+
+    // the edupage api uses some sort of remote procedure call system
+    // arguments are passed in '__args', the first parameter is always null
+    
+    // '__gsh' is constant, its value must be '00000000'
+    // I don't know what it does, but it is required
+
     return fetch(url,{
         method:"POST",
         body: JSON.stringify({

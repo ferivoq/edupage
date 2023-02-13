@@ -28,13 +28,13 @@ export const stackLinking: LinkingOptions<ParamList> = {
     config:{
         screens:{
             Home: {
-            path: ""
+                path: ""
             },
             SchoolHome:{
-            path: "/:schoolId/",
+                path: "/:schoolId/",
             },
             TimetableViewer:{
-            path: "/:schoolId/timetable/:timetableId/:type/:objectId",
+                path: "/:schoolId/timetable/:timetableId/:type/:objectId",
             }
         },
         initialRouteName:"Home",
