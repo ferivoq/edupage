@@ -108,7 +108,7 @@ export function IdInput(){
 
     return <Container>
         <UrlContainer>
-            <UrlText>http://</UrlText>
+            <UrlText>https://</UrlText>
             <Input
                 isValidSchoolId={isValidSchoolId}
                 onChangeText={(text)=>{
